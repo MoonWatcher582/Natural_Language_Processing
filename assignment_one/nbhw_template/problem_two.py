@@ -13,7 +13,7 @@ class id_node:
 
 def NB_from_data(prediction, data):
 	#given frequent_events_data, create the NB object that goes into, say frequent_events_example
-	head = count_data(data)
+	head = count_data(prediction, data)
 	head = probabilitize_data(head)
 	
 	prior = Distribution(head.identifier, head.values)
@@ -51,17 +51,16 @@ def probabilitize_data(node):
 	
 	return node
 
-def count_data(data):
-	head = init_data(data)
+def count_data(prediction, data):
+	head = init_data(prediction, data)
 	for datum in data:
-		first_key = head.identifier
-		first_value = None
+		pred_key = head.identifier
+		pred_value = datum[prediction]
 		for key, value in datum.items():
-			if key == first_key:
+			if key == prediction:
 				head.values[value] += 1
-				first_value = value
 			else:
-				head.children[first_value][key][value] += 1
+				head.children[pred_value][key][value] += 1
 	
 	#print head.identifier
 	#print head.values
@@ -69,14 +68,16 @@ def count_data(data):
 	
 	return head			
 
-def init_data(data):
+def init_data(prediction, data):
 	"""creates a data structure to parse and count the data"""
 	feats = list(get_features(data))
-	head = id_node(feats[0])
-	for value in get_values(feats[0], data):
+	head = id_node(prediction)
+	for value in get_values(prediction, data):
 		head.values[value] = 0
 		head.children[value] = dict()
-		for i in range(1, len(feats)):
+		for i in range(len(feats)):
+			if feats[i] == prediction:
+				continue
 			head.children[value][feats[i]] = dict()
 			for subvalue in get_values(feats[i], data):
 				head.children[value][feats[i]][subvalue] = 0
@@ -87,4 +88,4 @@ def init_data(data):
 	
 	return head
 
-#print NB_from_data(None, frequent_events_data)
+print NB_from_data('icecream_preference', frequent_events_data)
