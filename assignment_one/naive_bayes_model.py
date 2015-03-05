@@ -1,6 +1,6 @@
 import random, collections
 
-class Naive_Bayes_Model(object) :
+class NB(object) :
     def __init__(self, prior, likelihoods):
         """make a naive Bayes model with a specified prior over classes
         and class-dependent likelihood distributions"""
